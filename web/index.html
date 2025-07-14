@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章收藏管理系统</title>
+    <link rel="stylesheet" href="static/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js" defer></script>
+</head>
+<body>
+<div class="container">    <!-- 左侧面板 -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h1>文章收藏</h1>
+            <div class="add-section">
+                <div class="input-group">
+                    <input type="text" class="input-field" id="urlInput" placeholder="输入链接...">
+                    <button class="btn btn-primary" onclick="addArticle()">添加</button>
+                </div>
+                <div class="input-group">
+                    <input type="text" class="input-field" id="categoryInput" placeholder="分类标签...">
+                    <button class="btn btn-secondary" onclick="addCategory()">添加分类</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="category-section">
+            <div class="category-title">分类筛选</div>
+            <div class="category-list" id="categoryList">
+                <div class="category-tag active" data-category="all">全部</div>
+                <div class="category-tag" data-category="技术">技术</div>
+                <div class="category-tag" data-category="生活">生活</div>
+                <div class="category-tag" data-category="美食">美食</div>
+            </div>
+        </div>
+
+        <div class="articles-list" id="articlesList">
+            <!-- 文章列表将在这里动态生成 -->
+        </div>
+    </div>
+
+    <!-- 右侧内容区 -->
+    <div class="main-content">
+        <div class="content-header">
+            <div class="content-title" id="contentTitle">选择文章查看内容</div>
+            <div class="content-actions">
+                <button class="btn btn-secondary" onclick="deleteArticle()">删除</button>
+            </div>
+        </div>
+        <div class="content-body" id="contentBody">
+            <div class="empty-state">
+                <div class="empty-icon">📄</div>
+                <div>请从左侧选择文章查看内容</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/static/script.js"></script>
+</body>
+</html>

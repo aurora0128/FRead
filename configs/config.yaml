@@ -1,0 +1,3 @@
+storage:
+  markdown_path: "./internal/repo/storage"
+  markdown_Testpath: "./Test/storage"
