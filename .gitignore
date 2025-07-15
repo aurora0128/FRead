@@ -1,2 +1,4 @@
 .idea
 Test
+*.md
+repo.json

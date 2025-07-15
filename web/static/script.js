@@ -12,6 +12,8 @@ document.addEventListener('DOMContentLoaded', function() {
     loadArticles();
     loadCategories();
     setupEventListeners();
+    // 新增：悬浮按钮和弹窗事件
+    setupAddModalEvents();
 });
 
 // 设置事件监听器
@@ -31,23 +33,25 @@ function setupEventListeners() {
     });
 
     // 回车键添加文章
-    document.getElementById('urlInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            addArticle();
-        }
-    });
+    // document.getElementById('urlInput').addEventListener('keypress', function(e) {
+    //     if (e.key === 'Enter') {
+    //         addArticle();
+    //     }
+    // });
 
-    // 回车键添加分类
-    document.getElementById('categoryInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            addCategory();
-        }
-    });
+    // // 回车键添加分类
+    // document.getElementById('categoryInput').addEventListener('keypress', function(e) {
+    //     if (e.key === 'Enter') {
+    //         addCategory();
+    //     }
+    // });
 }
 
 // 添加文章
-async function addArticle() {
-    const url = document.getElementById('urlInput').value.trim();
+async function addArticle(urlFromModal) {
+    const url = urlFromModal !== undefined
+        ? urlFromModal.trim()
+        : (document.getElementById('urlInput') ? document.getElementById('urlInput').value.trim() : '');
     if (!url) {
         alert('请输入链接');
         return;
@@ -68,9 +72,10 @@ async function addArticle() {
 
         const article = await response.json();
         articles.unshift(article.data);
-        // loadArticles()
-        renderArticles()
-        document.getElementById('urlInput').value = '';
+        renderArticles();
+        if (document.getElementById('urlInput')) {
+            document.getElementById('urlInput').value = '';
+        }
         hideLoading();
     } catch (error) {
         console.error('添加文章失败:', error);
@@ -112,20 +117,6 @@ async function loadCategories() {
     }
 }
 
-// 渲染文章列表
-// function renderArticles() {
-//     const container = document.getElementById('articlesList');
-//     const filteredArticles = currentCategory === 'all' ?
-//         articles : articles.filter(article => article.data.category === currentCategory);
-//
-//     container.innerHTML = filteredArticles.map(article => `
-//             <div class="article-item" onclick="selectArticle('${article.id}')">
-//                 <div class="article-title">${article.title || '无标题'}</div>
-//                 <div class="article-url">${article.url}</div>
-//                 <div class="article-date">${formatDate(article.createdAt)}</div>
-//             </div>
-//         `).join('');
-// }
 
 function renderArticles() {
     const container = document.getElementById('articlesList');
@@ -310,4 +301,44 @@ function showError(message) {
                 <div>${message}</div>
             </div>
         `;
+}
+
+// 新增：悬浮按钮和弹窗逻辑
+function setupAddModalEvents() {
+    const fab = document.getElementById('openAddModalBtn');
+    const overlay = document.getElementById('addModalOverlay');
+    const addBtn = document.getElementById('modalAddBtn');
+    const cancelBtn = document.getElementById('modalCancelBtn');
+    const urlInput = document.getElementById('modalUrlInput');
+
+    fab.addEventListener('click', function() {
+        overlay.classList.add('active');
+        urlInput.value = '';
+        urlInput.focus();
+    });
+    cancelBtn.addEventListener('click', function() {
+        overlay.classList.remove('active');
+    });
+    overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) {
+            overlay.classList.remove('active');
+        }
+    });
+    addBtn.addEventListener('click', function() {
+        addArticleFromModal();
+    });
+    urlInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            addArticleFromModal();
+        }
+    });
+}
+function addArticleFromModal() {
+    const url = document.getElementById('modalUrlInput').value.trim();
+    if (!url) {
+        alert('请输入链接');
+        return;
+    }
+    addArticle(url);
+    document.getElementById('addModalOverlay').classList.remove('active');
 }

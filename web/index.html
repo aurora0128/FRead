@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="static/favicon.ico" type="image/x-icon">
+
     <title>文章收藏管理系统</title>
     <link rel="stylesheet" href="static/styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js" defer></script>
@@ -10,19 +12,6 @@
 <body>
 <div class="container">    <!-- 左侧面板 -->
     <div class="sidebar">
-        <div class="sidebar-header">
-            <h1>文章收藏</h1>
-            <div class="add-section">
-                <div class="input-group">
-                    <input type="text" class="input-field" id="urlInput" placeholder="输入链接...">
-                    <button class="btn btn-primary" onclick="addArticle()">添加</button>
-                </div>
-                <div class="input-group">
-                    <input type="text" class="input-field" id="categoryInput" placeholder="分类标签...">
-                    <button class="btn btn-secondary" onclick="addCategory()">添加分类</button>
-                </div>
-            </div>
-        </div>
 
         <div class="category-section">
             <div class="category-title">分类筛选</div>
@@ -54,6 +43,22 @@
             </div>
         </div>
     </div>
+</div>
+
+<!-- 悬浮添加按钮 -->
+<button class="fab" id="openAddModalBtn">＋</button>
+<!-- 添加文章弹窗 -->
+<div class="modal-overlay" id="addModalOverlay">
+  <div class="modal-card">
+    <div class="modal-header">添加文章</div>
+    <div class="modal-body">
+      <input type="text" class="input-field" id="modalUrlInput" placeholder="输入链接...">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" id="modalAddBtn">添加</button>
+      <button class="btn btn-secondary" id="modalCancelBtn">取消</button>
+    </div>
+  </div>
 </div>
 
 <script src="/static/script.js"></script>
