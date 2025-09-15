@@ -11,6 +11,7 @@ import (
 	"time"
 )
 
+// 目前支持列表:xhs zhihu
 func AddArticle(url string) (*model.Article, error) {
 	url, err := pkg.Raw2Url(url)
 	if err != nil {

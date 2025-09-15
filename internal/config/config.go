@@ -2,11 +2,10 @@ package config
 
 import (
 	"errors"
-	"github.com/spf13/viper"
 	"log"
-)
 
-var Cfg Config
+	"github.com/spf13/viper"
+)
 
 type Config struct {
 	//解析用
@@ -14,7 +13,12 @@ type Config struct {
 		MarkdownPath  string `mapstructure:"markdown_path"`
 		MarkdownTPath string `mapstructure:"markdown_Testpath"`
 	}
+	Cookie struct {
+		ZhihuCookie string `mapstructure:"zhihuCookie"`
+	}
 }
+
+var Cfg Config
 
 func InitConfig() {
 	viper.SetConfigName("config")

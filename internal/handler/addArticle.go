@@ -14,6 +14,8 @@ import (
 func AddArticle(c *gin.Context) {
 	//处理请求
 	var req model.AddArticleReq
+
+	//将网络参数绑定在req请求中
 	if err := c.ShouldBind(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
@@ -34,5 +36,4 @@ func AddArticle(c *gin.Context) {
 		"success": true,
 		"data":    *article,
 	})
-	return
 }
