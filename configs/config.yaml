@@ -1,3 +1,5 @@
+platform:
+  xiaohongshu: "www.xiaohongshu.com"
 storage:
   markdown_path: "./internal/repo/storage"
   markdown_Testpath: "./Test/storage"

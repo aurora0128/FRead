@@ -7,21 +7,7 @@ import (
 	"net/http"
 	"path/filepath"
 	"ppeua/FRead/pkg"
-	"regexp"
-	"strings"
 )
-
-/*
-Raw2Url 小红书复制连接得到的是描述+http链接，此操作用来得到纯http链接
-*/
-func Raw2Url(rawUrl string) (url string, err error) {
-	if !strings.Contains(rawUrl, "http") {
-		return "", errors.New("no http url")
-	}
-	urlRegex := regexp.MustCompile(`(https?://[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(?:/[a-zA-Z0-9-._~:/?#\[\]@!$&'()*+,;=%]*)?)`)
-	url = urlRegex.FindString(rawUrl)
-	return
-}
 
 // ParesUrl todo:将 #话题 换成对应的链接
 /*

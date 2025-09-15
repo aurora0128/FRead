@@ -1,2 +1,2 @@
-2025.07.15 
-add feature:comment,platform
+2025.07.15
+feat(article): 添加文章评论,增加消息中的平台字段

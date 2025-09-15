@@ -7,15 +7,17 @@ import (
 	"ppeua/FRead/internal/parser"
 	"ppeua/FRead/internal/repo"
 	"ppeua/FRead/model"
+	"ppeua/FRead/pkg"
 	"time"
 )
 
 func AddArticle(url string) (*model.Article, error) {
-	url, err := parser.Raw2Url(url)
+	url, err := pkg.Raw2Url(url)
 	if err != nil {
 		log.Printf("Raw2Url:%s,err: %s", url, err.Error())
 		return nil, err
 	}
+
 	info, err := parser.ParesUrl(url, config.Cfg.Storage.MarkdownPath)
 	if err != nil {
 		log.Printf("ParesUrl:%s,err: %s", url, err.Error())
