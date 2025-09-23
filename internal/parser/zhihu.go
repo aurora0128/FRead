@@ -12,9 +12,10 @@ import (
 )
 
 type zhihu struct {
-	Url     string `json:"url"`
-	Title   string `json:"question"`
-	Content string `json:"content"`
+	Url     string   `json:"url"`
+	Title   string   `json:"question"`
+	Content string   `json:"content"`
+	Img     []string `json:"img"`
 }
 
 func cleanContent(content string) string {
@@ -25,7 +26,7 @@ func cleanContent(content string) string {
 	content = strings.TrimSpace(content)
 	return content
 }
-func ParserUrlZhihu(url string, markdownPath string) (*zhihu, error) {
+func ParserUrlZhihu(url string, markdownPath string) ([]string, error) {
 	c := colly.NewCollector()
 	c.Limit(&colly.LimitRule{
 		DomainGlob:  "*zhihu.com",
@@ -33,6 +34,7 @@ func ParserUrlZhihu(url string, markdownPath string) (*zhihu, error) {
 		Delay:       2 * time.Second,
 	})
 	var result zhihu
+	result.Img = make([]string, 1)
 	result.Url = url
 	c.OnRequest(func(r *colly.Request) {
 		r.Headers.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
@@ -59,5 +61,12 @@ func ParserUrlZhihu(url string, markdownPath string) (*zhihu, error) {
 	if result.Content == "" {
 		return nil, errors.New("未找到回答内容")
 	}
-	return &result, nil
+
+	return zhihuTostring(&result), nil
+}
+
+// 标准返回格式 title content img[0]
+func zhihuTostring(z *zhihu) (res []string) {
+	res = append(res, z.Title, z.Content, z.Img[0])
+	return
 }

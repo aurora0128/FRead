@@ -9,6 +9,10 @@ import (
 
 type Config struct {
 	//解析用
+	Platform struct {
+		Xiaohongshu string `mapstructure:"xiaohongshu"`
+		Zhihu       string `mapstructure:"zhihu"`
+	}
 	Storage struct {
 		MarkdownPath  string `mapstructure:"markdown_path"`
 		MarkdownTPath string `mapstructure:"markdown_Testpath"`

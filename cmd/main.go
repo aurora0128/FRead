@@ -34,6 +34,7 @@ func main() {
 	})
 
 	handler.RegisterRoutes(g)
+
 	g.Run(":8080")
 
 }
