@@ -30,11 +30,15 @@ func AddArticle(url string) (*model.Article, error) {
 	} else if strings.Contains(url, config.Cfg.Platform.Zhihu) {
 		info, err = parser.ParserUrlZhihu(url, config.Cfg.Storage.MarkdownPath)
 	}
-
 	if err != nil {
 		log.Printf("ParesUrl:%s,err: %s", url, err.Error())
 		return nil, err
 	}
+	/*
+		info[0]:title
+		info[1]:content `markdown格式的`
+		info[2]:thumbnail
+	*/
 
 	id, err := uuid.NewV4()
 	if err != nil {

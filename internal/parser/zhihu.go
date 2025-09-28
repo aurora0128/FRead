@@ -4,28 +4,22 @@ import (
 	"errors"
 	"log"
 	"ppeua/FRead/internal/config"
-	"regexp"
 	"strings"
 	"time"
 
+	htmlToMarkdown "github.com/JohannesKaufmann/html-to-markdown/v2"
+	"github.com/PuerkitoBio/goquery"
 	"github.com/gocolly/colly/v2"
 )
 
 type zhihu struct {
-	Url     string   `json:"url"`
-	Title   string   `json:"question"`
+	Url   string `json:"url"`
+	Title string `json:"question"`
+	//content为markdown格式
 	Content string   `json:"content"`
 	Img     []string `json:"img"`
 }
 
-func cleanContent(content string) string {
-	// 将多个换行压缩为一个换行
-	content = regexp.MustCompile(`\r?\n+`).ReplaceAllString(content, "\n")
-	// 将连续的空格和制表符压成一个空格（不影响换行）
-	content = regexp.MustCompile(`[ \t]+`).ReplaceAllString(content, " ")
-	content = strings.TrimSpace(content)
-	return content
-}
 func ParserUrlZhihu(url string, markdownPath string) ([]string, error) {
 	c := colly.NewCollector()
 	c.Limit(&colly.LimitRule{
@@ -34,7 +28,7 @@ func ParserUrlZhihu(url string, markdownPath string) ([]string, error) {
 		Delay:       2 * time.Second,
 	})
 	var result zhihu
-	result.Img = make([]string, 1)
+	result.Img = make([]string, 0)
 	result.Url = url
 	c.OnRequest(func(r *colly.Request) {
 		r.Headers.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
@@ -49,7 +43,45 @@ func ParserUrlZhihu(url string, markdownPath string) ([]string, error) {
 		result.Title = strings.TrimSpace(e.Text)
 	})
 	c.OnHTML("span.RichText", func(e *colly.HTMLElement) {
-		result.Content = cleanContent(e.Text)
+		htmlContent, err := e.DOM.Html()
+		if err != nil {
+			log.Printf("HTML解析失败: %v\n", err)
+			return
+		}
+
+		// 使用goquery解析HTML
+		doc, err := goquery.NewDocumentFromReader(strings.NewReader(htmlContent))
+		if err != nil {
+			log.Printf("goquery解析失败: %v\n", err)
+			return
+		}
+
+		// 找到所有图片并替换src属性
+		doc.Find("img").Each(func(i int, s *goquery.Selection) {
+			// 检查是否有data-original属性
+			if originalSrc, exists := s.Attr("data-original"); exists && originalSrc != "" {
+				// 直接设置src属性为真实图片URL
+				s.SetAttr("src", originalSrc)
+				//将图片url添加到result.Img
+				result.Img = append(result.Img, originalSrc)
+				log.Printf("替换图片 %d: %s", i+1, originalSrc)
+			}
+		})
+
+		// 获取修改后的HTML
+		modifiedHTML, err := doc.Html()
+		if err != nil {
+			log.Printf("获取修改后HTML失败: %v\n", err)
+			return
+		}
+
+		makrdown, err := htmlToMarkdown.ConvertString(modifiedHTML)
+		if err != nil {
+			log.Printf("Markdown解析失败: %v\n", err)
+			return
+		}
+
+		result.Content = makrdown
 	})
 	c.OnError(func(r *colly.Response, err error) {
 		log.Printf("请求失败: %v\n", err)

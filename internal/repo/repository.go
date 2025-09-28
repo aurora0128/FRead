@@ -2,7 +2,6 @@ package repo
 
 import (
 	"errors"
-	"github.com/goccy/go-json"
 	"io"
 	"log"
 	"os"
@@ -10,6 +9,9 @@ import (
 	"ppeua/FRead/internal/config"
 	"ppeua/FRead/internal/global"
 	"ppeua/FRead/model"
+
+	"github.com/goccy/go-json"
+	"github.com/gofrs/uuid/v5"
 )
 
 /*
@@ -73,4 +75,30 @@ func ReadRepo() ([]byte, error) {
 	}
 
 	return jsonData, nil
+}
+
+//将content以markdown格式保存到本地
+
+func WriteMd2Repo(path, title, content string, img ...string) {
+	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, os.ModePerm)
+
+	//发生了重复名字错误
+	if err != nil {
+		var pathErr *os.PathError
+		if !errors.As(err, &pathErr) {
+			log.Println(err)
+			return
+		}
+
+		//todo:合适的命名规则
+		path = filepath.Dir(path)
+		id, _ := uuid.NewV4()
+		log.Printf("名字错误发生替换:%s -> %s\n", filepath.Base(path), id.String()[:6])
+		path = filepath.Join(path, id.String()[:6]+".md")
+		WriteMd2Repo(path, title, content, img...)
+	}
+
+	defer f.Close()
+
+	f.Write([]byte(title + content + "\n"))
 }

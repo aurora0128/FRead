@@ -2,16 +2,17 @@ package parser
 
 import (
 	"errors"
-	"github.com/PuerkitoBio/goquery"
 	"log"
 	"net/http"
 	"path/filepath"
 	"ppeua/FRead/pkg"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
 // ParesUrl todo:将 #话题 换成对应的链接
 /*
-解析指定的url，并将图片+内容写入当前的目录下的title.md
+	解析指定的url，并将图片+内容写入当前的目录下的title.md
 */
 func ParesUrl(url string, markdownPath string) ([]string, error) {
 	resp, err := http.Get(url)
@@ -44,11 +45,14 @@ func ParesUrl(url string, markdownPath string) ([]string, error) {
 		}
 		title = string(runeTitle)
 	}
-	path := filepath.Join(markdownPath, title+".md")
+
 	var imgUrl []string
 	doc.Find("meta[name='og:image']").Each(func(i int, s *goquery.Selection) {
 		img := s.AttrOr("content", "")
 		imgUrl = append(imgUrl, img)
 	})
+
+	path := filepath.Join(markdownPath, title+".md")
+
 	return pkg.Text2md(path, title, content, imgUrl...), nil
 }
